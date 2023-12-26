@@ -3,6 +3,7 @@
 pullcert helps you pull certificates from web hosts
 
 ## Usage
+Requires Bash and OpenSSL with s_client support to be installed on your machine.
 
 ```
 [*] pullcert 1.0
