@@ -16,7 +16,7 @@ pullcert.sh -snioff thatstel.la
 
 This produces an output like the following:
 ```
-[*] pullcert 1.0
+[*] pullcert 1.1
 [*] https://github.com/ThatStella7922/pullcert
 
 [Info] Will now retrieve the certificate for thatstel.la!
@@ -34,8 +34,27 @@ Certificate:
         Subject Public Key Info:
             [truncated for brevity]
 ```
+<br>
+In some cases, you may want the x509 representation of the certificate instead of human-readable details.
 
-For more advanced usage including SNI, x509 representation and more, see the full usage details below.
+A quick way to get those is as follows:
+```shell
+pullcert.sh -snioff thatstel.la raw
+```
+
+This produces an output like the following:
+```
+[*] pullcert 1.1
+[*] https://github.com/ThatStella7922/pullcert
+
+[Info] Will now retrieve the raw certificate for thatstel.la!
+-----BEGIN CERTIFICATE-----
+MIIF8zCCBNugAwIBAgISAyKsluYl3DeGbxRSLFz5XsGJMA0GCSqGSIb3DQEBCwUA
+MDIxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MQswCQYDVQQD
+    [truncated for brevity]
+```
+
+For more advanced usage including SNI support, more info about x509 representation and more, see the full usage details below.
 
 <details>
 <summary>pullcert's full usage details</summary>
@@ -43,19 +62,20 @@ For more advanced usage including SNI, x509 representation and more, see the ful
 This help is produced when running `pullcert.sh` with the `-h` argument (or no argument).
 
 ```
-[*] pullcert 1.0
+[*] pullcert 1.1
 [*] https://github.com/ThatStella7922/pullcert
 
 [?] pullcert helps you pull certificates from web hosts
 [?]
-[?] Basic usage example:
+[?] Basic example:
 [?]  pullcert.sh -snioff thatstel.la
 [?]
-[?] All possible arguments:
+[?] Valid arguments:
 [?]  pullcert.sh [sni arg] [host] [hostname if SNI] [raw]
 [?]
-[?] Documentation:
+[?] Full documentation:
 [?] -h or --h    Show this help.
+[?] -v or --v    Print the version and exit
 [?]
 [?] SNI argument
 [?] SNI is when multiple SSL hosts are sharing a single IP address.
