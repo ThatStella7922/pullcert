@@ -1,9 +1,9 @@
 #!/bin/bash
 
-ver="1.0"
+ver="1.1"
 
 # colors
-usecolors="false"
+usecolors="true"
 reset="\033[0m";faint="\033[37m";red="\033[38;5;196m";black="\033[38;5;244m";green="\033[38;5;46m";yellow="\033[38;5;226m";magenta="\033[35m";blue="\033[36m";default="\033[39m"
 # formatting
 bold="\033[1m";resetbold="\033[21m"
@@ -23,14 +23,15 @@ fi
 showHelp () {
     echo -e "$help pullcert helps you pull certificates from web hosts"
     echo -e "$help"
-    echo -e "$help Basic usage example:"
+    echo -e "$help Basic example:"
     echo -e "$help  pullcert.sh -snioff thatstel.la"
     echo -e "$help"
-    echo -e "$help All possible arguments:"
+    echo -e "$help Valid arguments:"
     echo -e "$help  pullcert.sh [sni arg] [host] [hostname if SNI] [raw]"
     echo -e "$help"
-    echo -e "$help Documentation:"
+    echo -e "$help Full documentation:"
     echo -e "$help -h or --h    Show this help."
+    echo -e "$help -v or --v    Print the version and exit"
     echo -e "$help"
     echo -e "$help SNI argument"
     echo -e "$help SNI is when multiple SSL hosts are sharing a single IP address."
@@ -64,6 +65,11 @@ showHelp () {
     echo -e "$help  pullcert.sh -silent -snion thatstel.la thatstel.la/example" 
 }
 
+printInit() {
+    echo -e "$init pullcert $ver"
+    echo -e "$init https://github.com/ThatStella7922/pullcert"
+}
+
 # Call: getCert sni[-snioff/-snion] host hostname raw
 #
 #                                          raw
@@ -75,14 +81,14 @@ getCert () {
             exit 0
         fi
         echo -e "$info Will now retrieve the certificate for $2 with hostname $3!"
-        echo | openssl s_client -connect $2:443 -servername $3 | openssl x509 -noout -text 
+        echo | openssl s_client -connect $2:443 -servername $3 | openssl x509 -noout -text 2>/dev/null
     elif [[ $1 == "-snioff" ]]; then
         if [[ $3 == "raw" ]]; then
             getCertRaw $1 $2
             exit 0
         fi
         echo -e "$info Will now retrieve the certificate for $2!"
-        echo | openssl s_client -connect $2:443 | openssl x509 -noout -text
+        echo | openssl s_client -connect $2:443 | openssl x509 -noout -text 2>/dev/null
     else
         exit 1
     fi
@@ -95,11 +101,11 @@ getCert () {
 getCertRaw () {
     if [[ $1 == "-snion" ]]; then
         echo -e "$info Will now retrieve the raw certificate for $2 with hostname $3!"
-        echo | openssl s_client -connect $2:443 -servername $3 2>/dev/null | openssl -in x509
+        echo | openssl s_client -connect $2:443 -servername $3 2>/dev/null | openssl x509 2>/dev/null
         exit 0
     elif [[ $1 == "-snioff" ]]; then
         echo -e "$info Will now retrieve the raw certificate for $2!"
-        echo | openssl s_client -connect $2:443 2>/dev/null | openssl -in x509
+        echo | openssl s_client -connect $2:443 2>/dev/null | openssl x509 2>/dev/null
         exit 0
     else
         echo -e "$error Invalid SNI argument"
@@ -124,14 +130,20 @@ getCertRawSilent () {
     fi
 }
 
+### End of function declarations
+### pullcert starts here
+
 if [[ $1 == "-silent" ]]; then
     getCertRawSilent $2 $3 $4 $5 
-fi
+fi # Detect if silent argument is provided, if yes run the getCertRawSilent function (this function exits for us)
 
-# init message
-echo -e "$init pullcert $ver"
-echo -e "$init https://github.com/ThatStella7922/pullcert"
-echo 
+if [[ $1 == "-v" ]] || [[ $1 == "--v"* ]]; then
+    printInit
+    exit 0
+fi # Detect if version argument is provided, if yes run the version function and exit
+
+printInit # prints the version info and stuff, running normally without intercepting silent or version
+echo
 
 # if first argument is empty, show help
 # if [[ -z $1 ]] || [[ -z $2 ]] || [[ -z $3 ]]; then
